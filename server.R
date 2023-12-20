@@ -2,18 +2,30 @@ library(shiny)
 
 shinyServer(function(input, output) {
   
-  output$summary = renderPrint({
-    if (is.null(input$files)==TRUE) {return("You have to up load your data!!!")} else {
-      dat = read.table(input$files$datapath, header = TRUE)
-      summary(dat)                     
-    }        
+  DATA = reactive({
+    if (is.null(input$files)) {return()} else {
+      dat = read.table(input$files$datapath,header=T)
+      return(dat) 
+    }
   })
   
-  output$view = renderTable({
-    if (is.null(input$files)==TRUE) {return()} else {
-      dat = read.table(input$files$datapath, header = TRUE)
-      head(dat, input$n)                     
-    }        
+  output$scatterPlot = renderPlot({
+    dat = DATA()
+    if (is.null(dat)) {return()} else {
+      plot(dat,col=input$Color)
+    }
   })
+  
+  output$download = downloadHandler(
+    filename = function() {'plot.pdf'},
+    content = function(con) {
+      dat = DATA()
+      if (is.null(dat)) {return()} else {
+        pdf(con)
+        plot(dat,col=input$Color)
+        dev.off()
+      }
+    }
+  )
   
 })
