@@ -30,8 +30,8 @@ shinyServer(function(input, output) {
     if (is.null(dat)|is.null(input$Y)|is.null(input$X)) {return()} else {
       X <- dat[,input$X]  #這裡是關鍵
       Y <- dat[,input$Y]  #這裡是關鍵
-      Result=lm(Y~X)
-      return(summary(Result))
+      Result=cor.test(X,Y,method=input$method)
+      return(Result)
     }  
   })
   
@@ -40,7 +40,7 @@ shinyServer(function(input, output) {
     if (is.null(dat)|is.null(input$Y)|is.null(input$X)) {return()} else {
       X <- dat[,input$X]  #這裡是關鍵
       Y <- dat[,input$Y]  #這裡是關鍵
-      plot(X,Y,pch=19)
+      plot(X,Y,pch=19,col=input$Color)
       abline(lm(Y~X),col="black")   
     }  
   })
